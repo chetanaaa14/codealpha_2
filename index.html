@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .calculator {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            width: 340px;
+            border: 2px solid #fff;
+        }
+
+        .display {
+            background-color: #2c2c2c;
+            color: #00ff88;
+            font-size: 2.5em;
+            padding: 15px;
+            text-align: right;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            white-space: nowrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* FIX: Changed to 4 columns */
+            gap: 10px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.4em;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background-color: #444;
+        }
+
+        button.operator {
+            background-color: #ff9500;
+        }
+
+        button.operator:hover {
+            background-color: #e08500;
+        }
+
+        button.equal {
+            background-color: #00cc44;
+            grid-column: span 2;
+        }
+
+        button.equal:hover {
+            background-color: #00b33c;
+        }
+
+        button.clear {
+            background-color: #ff3b30;
+            grid-column: span 2;
+        }
+
+        button.clear:hover {
+            background-color: #e02a20;
+        }
+
+        button.memory {
+            background-color: #6b7280;
+        }
+
+        button.memory:hover {
+            background-color: #5b616e;
+        }
+
+        button.function {
+            background-color: #8b5cf6;
+        }
+
+        button.function:hover {
+            background-color: #7c3aed;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+    <button class="memory" onclick="memoryClear()">MC</button>
+    <button class="memory" onclick="memoryRecall()">MR</button>
+    <button class="memory" onclick="memoryAdd()">M+</button>
+    <button class="memory" onclick="memorySubtract()">M-</button>
+    <button class="clear" onclick="clearDisplay()">C</button>
+    <button class="function" onclick="squareRoot()">√</button>
+    <button class="function" onclick="percentage()">%</button>
+    <button class="operator" onclick="appendToDisplay('/')">÷</button>
+    <button onclick="appendToDisplay('7')">7</button>
+    <button onclick="appendToDisplay('8')">8</button>
+    <button onclick="appendToDisplay('9')">9</button>
+    <button class="operator" onclick="appendToDisplay('*')">×</button>
+    <button onclick="appendToDisplay('4')">4</button>
+    <button onclick="appendToDisplay('5')">5</button>
+    <button onclick="appendToDisplay('6')">6</button>
+    <button class="operator" onclick="appendToDisplay('-')">-</button>
+    <button onclick="appendToDisplay('1')">1</button>
+    <button onclick="appendToDisplay('2')">2</button>
+    <button onclick="appendToDisplay('3')">3</button>
+    <button class="operator" onclick="appendToDisplay('+')">+</button>
+    <button onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
+    <button onclick="appendToDisplay('.')">.</button>
+    <button class="equal" onclick="calculate()">=</button>
+</div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentInput = '0';
+        let memory = 0;
+        let shouldReset = false;
+
+        function appendToDisplay(value) {
+            if (shouldReset) {
+                currentInput = '0';
+                shouldReset = false;
+            }
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            display.textContent = currentInput;
+            shouldReset = false;
+        }
+
+        function calculate() {
+            try {
+                currentInput = eval(currentInput.replace('×', '*').replace('÷', '/')).toString();
+                display.textContent = Number(currentInput).toFixed(8).replace(/\.?0+$/, '');
+                shouldReset = true;
+            } catch (error) {
+                display.textContent = 'Error';
+                shouldReset = true;
+            }
+        }
+
+        function squareRoot() {
+            try {
+                currentInput = Math.sqrt(eval(currentInput)).toString();
+                display.textContent = Number(currentInput).toFixed(8).replace(/\.?0+$/, '');
+                shouldReset = true;
+            } catch (error) {
+                display.textContent = 'Error';
+                shouldReset = true;
+            }
+        }
+
+        function percentage() {
+            try {
+                currentInput = (eval(currentInput) / 100).toString();
+                display.textContent = Number(currentInput).toFixed(8).replace(/\.?0+$/, '');
+                shouldReset = true;
+            } catch (error) {
+                display.textContent = 'Error';
+                shouldReset = true;
+            }
+        }
+
+        function memoryClear() {
+            memory = 0;
+            display.textContent = currentInput;
+        }
+
+        function memoryRecall() {
+            currentInput = memory.toString();
+            display.textContent = currentInput;
+            shouldReset = true;
+        }
+
+        function memoryAdd() {
+            try {
+                memory += eval(currentInput);
+                shouldReset = true;
+            } catch (error) {
+                display.textContent = 'Error';
+                shouldReset = true;
+            }
+        }
+
+        function memorySubtract() {
+            try {
+                memory -= eval(currentInput);
+                shouldReset = true;
+            } catch (error) {
+                display.textContent = 'Error';
+                shouldReset = true;
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', (event) => {
+            const key = event.key;
+            if (!isNaN(key) || key === '.') {
+                appendToDisplay(key);
+            } else if (['+', '-', '*', '/'].includes(key)) {
+                appendToDisplay(key === '*' ? '×' : key === '/' ? '÷' : key);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                currentInput = currentInput.slice(0, -1);
+                if (currentInput === '') currentInput = '0';
+                display.textContent = currentInput;
+            } else if (key === 'r' || key === 'R') {
+                memoryRecall();
+            } else if (key === 'm' || key === 'M') {
+                memoryAdd();
+            } else if (key === 'n' || key === 'N') {
+                memorySubtract();
+            } else if (key === 'q' || key === 'Q') {
+                memoryClear();
+            } else if (key === 's' || key === 'S') {
+                squareRoot();
+            } else if (key === '%') {
+                percentage();
+            }
+        });
+    </script>
+</body>
+</html>
